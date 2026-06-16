@@ -26,6 +26,12 @@ app.use(cors({
     credentials:true
 }))
 
+app.use((req , res , next) =>{
+  next();
+})
+
+
+
 app.use(express.json())
 app.use(cookieParser())
 app.use("/api/auth" , authRouter)
@@ -36,7 +42,7 @@ app.use("/api/interview" , interviewRouter)
 
 app.use("/api/payment" , paymentRouter)
 
-const PORT = process.env.PORT
+// const PORT = process.env.PORT
 
 
 
@@ -44,7 +50,9 @@ const PORT = process.env.PORT
 //     return res.json({message:"Server Started"})
 // })
 
-app.listen(PORT,() =>{
-    console.log(`server running on port ${PORT}`)
-    connectDb()
-})
+// app.listen(PORT,() =>{
+//     console.log(`server running on port ${PORT}`)
+   connectDb()
+// })
+
+export default app;
