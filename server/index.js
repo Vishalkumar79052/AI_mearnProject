@@ -22,9 +22,12 @@ app.use(
 );
 
 app.use(cors({
-    origin:"http://localhost:5173",
-    credentials:true
-}))
+  origin: [
+    "http://localhost:5173",
+    "https://ai-interview-rcju.vercel.app"
+  ],
+  credentials: true
+}));
 
 app.use((req , res , next) =>{
   next();
