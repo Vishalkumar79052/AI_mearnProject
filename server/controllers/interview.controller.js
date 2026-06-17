@@ -1,11 +1,13 @@
 import fs from "fs";
-import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
+// import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 import { askAi } from "../services/openRouter.services.js";
 import User from "../models/user-model.js";
 import Interview from "../models/interview.model.js";
 
 export const analyzeResume = async (req, res) => {
     try {
+
+         const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
 
         if (!req.file) {
 
