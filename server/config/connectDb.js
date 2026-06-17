@@ -1,31 +1,20 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
-// const connectDb = async() =>{
-//     try{
-//         await mongoose.connect(process.env.MONGO_URL)
-//         console.log("DataBase Connected :")
+let isConnected = false;
 
-//     }catch(error){
-//         console.log(`DataBase Error &{error}`)
-
-//     }
-// }
-
-let isConnected=false;
 async function connectDb() {
-    try{
-        await mongoose.connect(process.env.MONGO_URL ,{
-            useNewUrlParser:true,
-            useUnifiedTopology:true,
-        });
-        isConnected=true;
-        console.log("DataBase Connected :");
+    try {
+        if (isConnected) {
+            return;
+        }
 
+        await mongoose.connect(process.env.MONGO_URL);
 
-    }catch(error){
-        console.log(`DataBase Error ${error}`);
+        isConnected = true;
+        console.log("Database Connected");
+    } catch (error) {
+        console.error("Database Error:", error);
     }
-    
 }
 
 export default connectDb;
