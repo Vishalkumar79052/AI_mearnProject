@@ -23,7 +23,7 @@ async function connectDb() {
 
 
     }catch(error){
-        console.log(`DataBase Error &{error}`);
+        console.log(`DataBase Error ${error}`);
     }
     
 }
