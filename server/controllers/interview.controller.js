@@ -5,7 +5,11 @@ import User from "../models/user-model.js";
 import Interview from "../models/interview.model.js";
 
 export const analyzeResume = async (req, res) => {
+
+    console.log("Controller started");
+
     try {
+         console.log(req.file);
 
          const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
 
@@ -75,6 +79,7 @@ Return strictly json:
             skills: parsed.skills,
             resumeText
         });
+        
 
     } catch (error) {
 
