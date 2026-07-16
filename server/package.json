@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "vercel-start":"node index.js"
+    "vercel-start": "node index.js"
   },
   "dependencies": {
     "axios": "^1.13.6",
@@ -23,7 +23,7 @@
     "mongoose": "^9.2.2",
     "multer": "^2.1.1",
     "nodemon": "^3.1.14",
-    "pdfjs-dist": "^5.5.207",
+    "pdf-parse": "^1.1.1",
     "razorpay": "^2.9.6"
   }
 }

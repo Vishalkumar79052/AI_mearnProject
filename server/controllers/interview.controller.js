@@ -4,94 +4,108 @@ import { askAi } from "../services/openRouter.services.js";
 import User from "../models/user-model.js";
 import Interview from "../models/interview.model.js";
 
+// import pdf from "pdf-parse";
+
 export const analyzeResume = async (req, res) => {
+  console.log("Controller started");
 
-    console.log("Controller started");
+  try {
+    console.log(req.file);
 
-    try {
-         console.log(req.file);
-
-         const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
-
-        if (!req.file) {
-
-            return res.status(400).json({ message: "Resume required" });
-        }
-
-        const filepath = req.file.path;
-
-        const fileBuffer = await fs.promises.readFile(filepath);
-        const unit8Array = new Uint8Array(fileBuffer);
-
-        const pdf = await pdfjsLib.getDocument({ data: unit8Array }).promise;
-
-        let resumeText = "";
-
-        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-
-            const page = await pdf.getPage(pageNum);
-
-            const content = await page.getTextContent();
-
-            const pageText = content.items.map(item => item.str).join(" ");
-
-            resumeText += pageText + "\n";
-        }
-
-        resumeText = resumeText.replace(/\s+/g, " ").trim();
-
-        const messages = [
-            {
-                role: "system",
-                content: `Extract structured data from resume.
-Return strictly json:
-{
-"role":"string",
-"experience":"string",
-"projects":["project1","project2"],
-"skills":["skill1","skill2"]
-}`
-            },
-            {
-                role: "user",
-                content: resumeText
-            }
-        ];
-
-        const aiResponse = await askAi(messages);
-
-        // const parsed = JSON.parse(aiResponse);
-
-        const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
-
-        if (!jsonMatch) {
-            throw new Error("Invalid AI response format");
-        }
-
-        const parsed = JSON.parse(jsonMatch[0]);
-
-        fs.unlinkSync(filepath);
-
-        res.json({
-            role: parsed.role,
-            experience: parsed.experience,
-            projects: parsed.projects,
-            skills: parsed.skills,
-            resumeText
-        });
-        
-
-    } catch (error) {
-
-        console.error(error);
-
-        if (req.file && fs.existsSync(req.file.path)) {
-            fs.unlinkSync(req.file.path);
-        }
-
-        return res.status(500).json({ message: error.message });
-
+    if (!req.file) {
+      return res.status(400).json({
+        message: "Resume required",
+      });
     }
+
+    // Import pdfjs
+    const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
+
+    const filePath = req.file.path;
+
+    // Read uploaded PDF
+    const fileBuffer = await fs.promises.readFile(filePath);
+    const uint8Array = new Uint8Array(fileBuffer);
+
+    // Load PDF
+    const pdf = await pdfjsLib.getDocument({
+      data: uint8Array,
+    }).promise;
+
+    // Extract text
+    let resumeText = "";
+
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      const page = await pdf.getPage(pageNum);
+
+      const content = await page.getTextContent();
+
+      const pageText = content.items
+        .map((item) => item.str)
+        .join(" ");
+
+      resumeText += pageText + "\n";
+    }
+
+    resumeText = resumeText.replace(/\s+/g, " ").trim();
+
+    // AI Prompt
+    const messages = [
+      {
+        role: "system",
+        content: `Extract structured data from the resume.
+
+Return ONLY valid JSON.
+
+{
+  "role":"string",
+  "experience":"string",
+  "projects":["project1","project2"],
+  "skills":["skill1","skill2"]
+}`,
+      },
+      {
+        role: "user",
+        content: resumeText,
+      },
+    ];
+
+    // Ask AI
+    const aiResponse = await askAi(messages);
+
+    // Extract JSON from AI response
+    const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
+
+    if (!jsonMatch) {
+      throw new Error("Invalid AI response format");
+    }
+
+    const parsed = JSON.parse(jsonMatch[0]);
+
+    // Delete uploaded file
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    return res.status(200).json({
+      role: parsed.role || "",
+      experience: parsed.experience || "",
+      projects: parsed.projects || [],
+      skills: parsed.skills || [],
+      resumeText,
+    });
+  } catch (error) {
+    console.error(error);
+
+    if (req.file?.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 
 
@@ -450,7 +464,7 @@ export const getInterviewReport = async (req, res) => {
         let totalCorrectness = 0;
 
         interview.questions.forEach((q) => {
-           //  totalScore += q.score || 0;
+            //  totalScore += q.score || 0;
             totalConfidence += q.confidence || 0;
             totalCommunication += q.communication || 0;
             totalCorrectness += q.correctness || 0;
@@ -462,15 +476,15 @@ export const getInterviewReport = async (req, res) => {
         const avgCorrectness = totalQuestions ? totalCorrectness / totalQuestions : 0;
 
         return res.json({
-            finalScore:interview.finalScore,
+            finalScore: interview.finalScore,
             confidence: Number(avgConfidence.toFixed(1)),
-            communication:Number(avgCommunication.toFixed(1)),
-            correctness:Number(avgCorrectness.toFixed(1)),
+            communication: Number(avgCommunication.toFixed(1)),
+            correctness: Number(avgCorrectness.toFixed(1)),
             questionWiseScore: interview.questions
         });
-    
+
     } catch (error) {
-         return res.status(500).json({ message: `failed to Find currentUser Interview Report ${error}` })
+        return res.status(500).json({ message: `failed to Find currentUser Interview Report ${error}` })
 
     }
 
