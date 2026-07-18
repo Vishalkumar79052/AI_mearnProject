@@ -22,7 +22,7 @@ app.use(
 );
 
 app.use(cors({
-    origin:"https://ai-mearnproject-3.onrender.com/",
+    origin:"https://ai-mearnproject-2.onrender.com",
     credentials:true
 }))
 
