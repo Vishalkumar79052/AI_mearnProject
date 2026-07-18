@@ -22,18 +22,9 @@ app.use(
 );
 
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    //  "https://ai-mearn-project-xrdl-cbc6fs2em.vercel.app",
-  ],
-  credentials: true
-}));
-
-app.use((req , res , next) =>{
-  next();
-})
-
-
+    origin:"http://localhost:5173",
+    credentials:true
+}))
 
 app.use(express.json())
 app.use(cookieParser())
@@ -45,7 +36,7 @@ app.use("/api/interview" , interviewRouter)
 
 app.use("/api/payment" , paymentRouter)
 
-// const PORT = process.env.PORT
+const PORT = process.env.PORT
 
 
 
@@ -53,21 +44,7 @@ app.use("/api/payment" , paymentRouter)
 //     return res.json({message:"Server Started"})
 // })
 
-// app.listen(PORT,() =>{
-//     console.log(`server running on port ${PORT}`)
-  await connectDb()
-
-// })
-
-app.get("/", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "API is running successfully"
-  });
-});
-
-app.get('/favicon.ico', (req, res) => {
-  res.status(204).end();
-});
-
-export default app;
+app.listen(PORT,() =>{
+    console.log(`server running on port ${PORT}`)
+    connectDb()
+})
