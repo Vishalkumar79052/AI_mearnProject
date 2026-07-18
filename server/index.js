@@ -24,7 +24,7 @@ app.use(
 app.use(cors({
   origin: [
     "http://localhost:5173",
-     "https://ai-mearn-project-xrdl-cbc6fs2em.vercel.app",
+    //  "https://ai-mearn-project-xrdl-cbc6fs2em.vercel.app",
   ],
   credentials: true
 }));
