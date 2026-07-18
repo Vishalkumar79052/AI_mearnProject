@@ -20,21 +20,25 @@ app.use(
     crossOriginEmbedderPolicy: false, // 🔥 also disable this
   })
 );
-
-app.use(cors({
-    origin:"https://ai-mearnproject-2.onrender.com",
-    credentials:true
-}))
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://ai-mearnproject-3.onrender.com",
+    ],
+    credentials: true,
+  })
+);
 
 app.use(express.json())
 app.use(cookieParser())
-app.use("/api/auth" , authRouter)
+app.use("/api/auth", authRouter)
 
-app.use("/api/user" , userRouter)
+app.use("/api/user", userRouter)
 
-app.use("/api/interview" , interviewRouter)
+app.use("/api/interview", interviewRouter)
 
-app.use("/api/payment" , paymentRouter)
+app.use("/api/payment", paymentRouter)
 
 const PORT = process.env.PORT
 
@@ -44,7 +48,7 @@ const PORT = process.env.PORT
 //     return res.json({message:"Server Started"})
 // })
 
-app.listen(PORT,() =>{
-    console.log(`server running on port ${PORT}`)
-    connectDb()
+app.listen(PORT, () => {
+  console.log(`server running on port ${PORT}`)
+  connectDb()
 })
