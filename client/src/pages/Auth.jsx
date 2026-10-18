@@ -23,50 +23,42 @@ function Auth({ isModel = false }) {
       const response = await signInWithPopup(auth, provider);
 
       const user = response.user;
+      const name = user?.displayName;
+      const email = user?.email;
 
       const result = await axios.post(
         `${ServerUrl}/api/auth/google`,
-        {
-          name: user.displayName,
-          email: user.email,
-        },
-        {
-          withCredentials: true,
-        }
+        { name, email },
+        { withCredentials: true }   // important for cookies
       );
 
-      dispatch(setUserData(result.data));
+      // console.log(result.data);
+      dispatch(setUserData(result.data))
+
     } catch (error) {
-      console.error("Google Login Error:", error);
-      dispatch(setUserData(null));
-    } finally {
-      setLoading(false);
+      console.log(error);
+      dispatch(setUserData(null))
     }
   };
-
   return (
-    <div
-      className={`w-full ${
-        isModel
-          ? "py-4"
-          : "min-h-screen bg-[#f3f3f3] flex items-center justify-center px-6 py-20"
-      }`}
-    >
+    <div className='w-full 
+  ${isModel ? "py-4" :"min-h-screen bg-[#f3f3f3] flex items-center 
+  justify-center px-6 py-20"}'>
       <motion.div
         initial={{ opacity: 0, y: -40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.05 }}
-        className={`w-full ${
-          isModel
-            ? "max-w-md p-8 rounded-3xl"
-            : "max-w-lg p-12 rounded-[32px]"
-        } bg-white shadow-2xl border border-gray-200`}
-      >
-        {/* Logo */}
-        <div className="flex items-center justify-center gap-3 mb-6">
-          <div className="bg-black text-white p-2 rounded-lg">
+        className='w-full 
+  ${isModel ? "max-w-md p-8 rounded-3xl" : 
+  "max-w-lg p-12 rounded-[32px]"}
+   bg-white shadow-2xl border border-gray-200'>
+        <div className='flex item-center justify-center gap-3 mb-6'>
+          <div className='bg-black text-white p-2 rounded-lg'>
             <BsRobot size={18} />
+
+
           </div>
+          <h2 className='font-semibold text-lg'>InterviewIQ.AI</h2>
 
           <h2 className="font-semibold text-lg">InterviewIQ.AI</h2>
         </div>
@@ -92,11 +84,10 @@ function Auth({ isModel = false }) {
           disabled={loading}
           whileHover={{ opacity: 0.85, scale: 1.03 }}
           whileTap={{ scale: 0.98 }}
-          className={`w-full flex items-center justify-center gap-3 py-3 rounded-full shadow-md transition ${
-            loading
+          className={`w-full flex items-center justify-center gap-3 py-3 rounded-full shadow-md transition ${loading
               ? "bg-gray-600 cursor-not-allowed"
               : "bg-black text-white cursor-pointer"
-          }`}
+            }`}
         >
           <FcGoogle size={22} />
 

@@ -1,19 +1,13 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
-let isConnected = false;
-
-async function connectDb() {
+const connectDb = async () => {
     try {
-        if (isConnected) {
-            return;
-        }
+        await mongoose.connect(process.env.MONGO_URL)
+        console.log("DataBase Connected :")
 
-        await mongoose.connect(process.env.MONGO_URL);
-
-        isConnected = true;
-        console.log("Database Connected");
     } catch (error) {
-        console.error("Database Error:", error);
+        console.log(`DataBase Error &{error}`)
+
     }
 }
 

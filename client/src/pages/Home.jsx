@@ -35,7 +35,7 @@ function Home() {
       <div className='flex-1 px-6 py-20'>
         <div className='max-w-6xl mx-auto'>
         <div className='flex justify-center mb-6'>
-          <div className="bg-gray-100 text-grey-600 text-sm  
+          <div className="bg-gray-100 text-gray-600 text-sm  
           px-4 py-2 rounded-full flex items-center gap-2 tracking-wide">
             <HiSparkles size={20} className="text-green-600 bg-green-50" />
             AI Powered Smart Interview Platform
