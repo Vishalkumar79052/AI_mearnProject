@@ -21,8 +21,21 @@ app.use(
   })
 );
 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:3000"
+].filter(Boolean);
+
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
   credentials: true
 }))
 
@@ -36,7 +49,13 @@ app.use("/api/interview", interviewRouter)
 
 app.use("/api/payment", paymentRouter)
 
-const PORT = process.env.PORT || 4000
+const PORT = process.env.PORT
+
+
+
+// app.get("/",(req , res) =>{
+//     return res.json({message:"Server Started"})
+// })
 
 app.listen(PORT, () => {
   console.log(`server running on port ${PORT}`)

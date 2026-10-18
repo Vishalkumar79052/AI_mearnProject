@@ -266,14 +266,8 @@ Make questions based on the candidate’s role, experience,interviewMode, projec
 export const submitAnswer = async (req, res) => {
     try {
         const { interviewId, questionIndex, answer, timeTaken } = req.body
-        const interview = await Interview.findOne({ _id: interviewId, userId: req.userId })
-        if (!interview) {
-            return res.status(404).json({ message: "Interview not found or unauthorized" })
-        }
+        const interview = await Interview.findById(interviewId)
         const question = interview.questions[questionIndex]
-        if (!question) {
-            return res.status(400).json({ message: "Invalid question index" })
-        }
 
         // if no Answer
 
@@ -358,31 +352,18 @@ Answer: ${answer}
 
         const aiResponse = await askAi(messages)
 
-        let parsed;
-        try {
-            const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
-            parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(aiResponse);
-        } catch (parseErr) {
-            console.error("AI JSON parsing fallback:", parseErr, aiResponse);
-            parsed = {
-                confidence: 6,
-                communication: 6,
-                correctness: 6,
-                finalScore: 6,
-                feedback: "Good response. Try to structure with clear real-world examples."
-            };
-        }
+        const parsed = JSON.parse(aiResponse)
 
         question.answer = answer;
-        question.confidence = Number(parsed.confidence) || 0;
-        question.communication = Number(parsed.communication) || 0;
-        question.correctness = Number(parsed.correctness) || 0;
-        question.score = Number(parsed.finalScore) || Math.round((question.confidence + question.communication + question.correctness) / 3);
-        question.feedback = parsed.feedback || "Good response.";
+        question.confidence = parsed.confidence;
+        question.communication = parsed.communication;
+        question.correctness = parsed.correctness;
+        question.score = parsed.finalScore;
+        question.feedback = parsed.feedback;
 
         await interview.save();
 
-        return res.status(200).json({ feedback: question.feedback })
+        return res.status(200).json({ feedback: parsed.feedback })
 
 
 
@@ -399,10 +380,10 @@ Answer: ${answer}
 export const finishInterview = async (req, res) => {
     try {
         const { interviewId } = req.body
-        const interview = await Interview.findOne({ _id: interviewId, userId: req.userId })
+        const interview = await Interview.findById(interviewId)
         if (!interview) {
 
-            return res.status(404).json({ message: "Interview not found or unauthorized" })
+            return res.status(400).json({ message: "failed to find interview" })
         }
 
         const totalQuestions = interview.questions.length;
@@ -471,9 +452,9 @@ export const getMyInterviews = async (req, res) => {
 
 export const getInterviewReport = async (req, res) => {
     try {
-        const interview = await Interview.findOne({ _id: req.params.id, userId: req.userId })
+        const interview = await Interview.findById(req.params.id)
         if (!interview) {
-            return res.status(404).json({ message: "Interview not found or unauthorized" });
+            return res.status(404).json({ message: "Interview not found" });
         }
 
         const totalQuestions = interview.questions.length;

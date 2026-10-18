@@ -5,42 +5,35 @@ import crypto from 'crypto'
 
 
 
-const PLAN_CATALOG = {
-    basic: { amount: 100, credits: 200, name: "Starter Pack" },
-    pro: { amount: 250, credits: 500, name: "Pro Pack" },
-};
-
 export const createOrder = async (req , res) => {
     try {
-        const { planId } = req.body;
-        const selectedPlan = PLAN_CATALOG[planId];
-
-        if (!selectedPlan) {
-            return res.status(400).json({ message: "Invalid plan selected" });
+        const {planId , amount , credits} = req.body;
+        if(!amount || !credits){
+            return res.status(400).json({message:"Invalid plan data"})
         }
-
-        const option = {
-            amount: selectedPlan.amount * 100,
-            currency: "INR",
-            receipt: `receipt_${Date.now()}`,
+        const option ={
+            amount:amount * 100,
+            currency:"INR",
+            receipt:`receipt_${Date.now()}`,
         };
 
-        const order = await razorpay.orders.create(option);
+        const order = await razorpay.orders.create(option)
 
         await Payment.create({
-            userId: req.userId,
+            userId:req.userId,
             planId,
-            amount: selectedPlan.amount,
-            credits: selectedPlan.credits,
-            razorpayOrderId: order.id,
-            status: "created"
+            amount,
+            credits,
+            razorpayOrderId:order.id,
+            status:"created"
         });
-
-        return res.json(order);
+       return res.json(order);
         
     } catch (error) {
-        return res.status(500).json({ message: `failed to create Razorpay order: ${error.message || error}` });
+        return res.status(500).json({message:`failed to create Razorpay order ${error}`})
+        
     }
+    
 }
 
 

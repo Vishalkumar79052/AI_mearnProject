@@ -8,7 +8,7 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YA
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 function Step3Report({ report }) {
-  const navigate = useNavigate()
+   const navigate = useNavigate()
 
   if (!report) {
     return (
@@ -59,102 +59,102 @@ function Step3Report({ report }) {
   const score = finalScore;
   const percentage = (score / 10) * 100;
 
-  const downloadPDF = () => {
-    const doc = new jsPDF("p", "mm", "a4");
-
+  const downloadPDF = () =>{
+    const doc = new jsPDF("p" , "mm" , "a4");
+    
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 20;
     const contentWidth = pageWidth - margin * 2;
 
     let currently = 25;
 
-    doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica" , "bold");
     doc.setFontSize(20);
-    doc.setTextColor(34, 197, 94);
-    doc.text("AI Interview Performance Report", pageWidth / 2, currently, { align: "center" });
+    doc.setTextColor(34,197,94);
+    doc.text("AI Interview Performance Report",pageWidth / 2, currently , {align:"center"});
 
     currently += 5;
 
     //underline
-    doc.setDrawColor(34, 197, 94);
-    doc.line(margin, currently + 2, pageWidth - margin, currently + 2);
+    doc.setDrawColor(34,197,94);
+    doc.line(margin , currently + 2, pageWidth - margin, currently + 2);
 
     currently += 15;
 
     // FINAL SCORE BOX
-    doc.setFillColor(240, 253, 244);
-    doc.roundedRect(margin, currently, contentWidth, 20, 4, 4, "F");
-    doc.setTextColor(0, 0, 0);
+    doc.setFillColor(240 , 253 , 244);
+    doc.roundedRect(margin,currently,contentWidth,20,4,4,"F");
+    doc.setTextColor(0,0,0);
     doc.text(
       `Final Score : ${finalScore}/10`,
       pageWidth / 2,
       currently + 12,
-      { align: "center" }
+      {align:"center"}
     );
 
     currently += 30;
 
     // skills box
-    doc.setFillColor(249, 250, 251);
-    doc.roundedRect(margin, currently, contentWidth, 30, 4, 4, "F");
+    doc.setFillColor(249 , 250 , 251);
+    doc.roundedRect(margin,currently,contentWidth,30,4,4,"F");
     doc.setFontSize(12);
-    doc.text(`Confidence:${confidence}`, margin + 10, currently + 10);
-    doc.text(`Communication :${communication}`, margin + 10, currently + 18);
-    doc.text(`Correctness:${correctness}`, margin + 10, currently + 26);
+    doc.text(`Confidence:${confidence}`,margin + 10,currently + 10);
+    doc.text(`Communication :${communication}`,margin + 10, currently + 18);
+    doc.text(`Correctness:${correctness}`,margin + 10, currently + 26);
 
     currently += 45;
 
     //ADVICE
-    let advice = "";
-    if (finalScore >= 8) {
-      advice = "Excellent performance.Maintain confidence and structure. Continue refining clarity and supporting answers with strong real-word examples.";
-    } else if (finalScore >= 5) {
-      advice =
-        "Good foundation shown. Improve clarity and structure.Practice delivering concise, confident answers with stronger supporting examples.";
-    } else {
-      advice = "Significant improvement required. Focus on structured thinking clarity, and confident delivery.Practice answering aloud regularly.";
+    let advice ="";
+    if(finalScore >= 8){
+      advice ="Excellent performance.Maintain confidence and structure. Continue refining clarity and supporting answers with strong real-word examples.";
+    }else if(finalScore >=5){
+      advice=
+      "Good foundation shown. Improve clarity and structure.Practice delivering concise, confident answers with stronger supporting examples.";
+    }else{
+      advice="Significant improvement required. Focus on structured thinking clarity, and confident delivery.Practice answering aloud regularly.";
     }
 
-    doc.setFillColor(255, 255, 255);
+    doc.setFillColor(255,255,255);
     doc.setDrawColor(220);
-    doc.roundedRect(margin, currently, contentWidth, 35, 4, 4);
-    doc.setFont("helvetica", "bold");
+    doc.roundedRect(margin,currently,contentWidth,35,4,4);
+    doc.setFont("helvetica","bold");
     doc.setFontSize(11);
 
-    const splitAdvice = doc.splitTextToSize(advice, contentWidth - 20);
-    doc.text(splitAdvice, margin + 10, currently + 20);
+    const splitAdvice = doc.splitTextToSize(advice,contentWidth - 20);
+    doc.text(splitAdvice,margin + 10 , currently + 20);
 
     currently += 50;
 
     //QUESTION TABLE
-    autoTable(doc, {
-      startY: currently,
-      margin: { left: margin, right: margin },
-      head: [["#", "Question", "score", "Feedback"]],
-      body: questionWiseScore.map((q, i) => [
+    autoTable(doc,{
+      startY:currently,
+      margin:{left:margin , right:margin},
+      head:[["#","Question","score","Feedback"]],
+      body:questionWiseScore.map((q,i)=>[
         `${i + 1}`,
         q.question,
         `${q.score}/10`,
         q.feedback,
       ]),
-      styles: {
-        fontSize: 9,
-        cellPadding: 5,
-        valign: "top",
+      styles:{
+        fontSize:9,
+        cellPadding:5,
+        valign:"top",
       },
-      headStyles: {
-        fillColor: [34, 197, 94],
-        textColor: 255,
-        halign: "center",
+      headStyles:{
+        fillColor:[34,197,94],
+        textColor:255,
+        halign:"center",
       },
-      columnStyles: {
-        0: { cellWidth: 10, halign: "center" },
-        1: { cellWidth: 55 },
-        2: { cellWidth: 20, halign: "center" },
-        3: { cellWidth: "auto" },
+      columnStyles:{
+        0:{cellWidth:10 , halign:"center"},
+        1:{cellWidth:55},
+        2:{cellWidth:20,halign:"center"},
+        3:{cellWidth:"auto"},
       },
-      alternateRowStyles: {
-        fillColor: [249, 250, 251],
+      alternateRowStyles:{
+        fillColor:[249,250,251],
       },
     });
     doc.save("AI_Interview_Report.pdf");
@@ -180,7 +180,7 @@ function Step3Report({ report }) {
               className='text-3xl font-extrabold bg-gradient-to-r from-indigo-500 to-cyan-400 bg-clip-text text-transparent flex-nowrap tracking-wide'
               style={{ fontFamily: "'Syne', sans-serif" }}
             >
-              INTERVIEW REPORT DASHBOARD
+               INTERVIEW REPORT DASHBOARD
             </h1>
             <p className='text-cyan-800 mt-2 tracking-wide'>
               AI-Powered performance insights
@@ -193,14 +193,14 @@ function Step3Report({ report }) {
 
         </button> */}
 
-        <button
-          onClick={downloadPDF}
-          className="relative inline-flex items-center justify-center px-6 py-3 overflow-hidden font-semibold text-white transition-all duration-300 bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500 rounded-xl shadow-lg group hover:shadow-emerald-400/50 hover:scale-105 active:scale-95 cursor-pointer">
+        <button 
+        onClick={downloadPDF}
+        className="relative inline-flex items-center justify-center px-6 py-3 overflow-hidden font-semibold text-white transition-all duration-300 bg-gradient-to-r from-emerald-500 via-teal-500 to-green-500 rounded-xl shadow-lg group hover:shadow-emerald-400/50 hover:scale-105 active:scale-95 cursor-pointer">
 
           <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></span>
 
           <span className="relative flex items-center gap-2">
-            Download PDF
+             Download PDF
           </span>
 
         </button>
@@ -304,7 +304,7 @@ function Step3Report({ report }) {
                     type="monotone"
                     dataKey="score"
                     stroke="#22c55e"
-                    fill="#bbf7d0"
+                    fill="#bbf70"
                     strokeWidth={3} />
                 </AreaChart>
 
@@ -318,44 +318,44 @@ function Step3Report({ report }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className='bg-emerald-50 rounded-2xl sm:rounded-3xl shadow-lg p-5 sm:p-8 border border-emerald-600'>
-            <h3 className='sm:text-lg font-semibold text-cyan-500 mb-6'>
-              Question Breakdown
-            </h3>
-            <div>
-              {questionWiseScore.map((q, i) => (
-                <div key={i}
+              <h3 className='text-cyan-700 sm:text-lg font-semibold text-cyan-500 mb-6'>
+                Question Breakdown 
+              </h3>
+              <div>
+                {questionWiseScore.map((q,i)=>(
+                  <div key={i}
                   className='bg-emerald-50 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-green-400'>
-                  <div className='flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4'>
-                    <div className=''>
-                      <p className='text-xs text-cyan-500 '>
-                        Question {i + 1}
+                    <div className='flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4'>
+                      <div className=''>
+                        <p className='text-xs text-cyan-500 '>
+                          Question {i + 1}
+                        </p>
+                        <p className='font-semibold text-gray-700 text-sm sm:text-base leading-relaxed'>
+                          {q.question || "question not available"}
+                        </p>
+
+                      </div>
+
+                      <div className='bg-green-200 text-green-600 px-3 py-1 rounded-full font-bold text-xs sm:text-sm w-fit'>
+                        {q.score ?? 0}/10
+                      </div>
+
+                    </div>
+
+                    <div className='bg-gray-200 border border-green-500 p-4 rounded-lg'>
+                      <p className='text-sm text-green-600 font-semibold mb-1'>
+                        AI Feedback
                       </p>
-                      <p className='font-semibold text-gray-700 text-sm sm:text-base leading-relaxed'>
-                        {q.question || "question not available"}
+
+                      <p className='text-sm text-cyan-800 leading-relaxed '>
+                        {q.feedback && q.feedback.trim() !== "" ? q.feedback : "No feedback available for this question."}
                       </p>
 
                     </div>
 
-                    <div className='bg-green-200 text-green-600 px-3 py-1 rounded-full font-bold text-xs sm:text-sm w-fit'>
-                      {q.score ?? 0}/10
-                    </div>
-
                   </div>
-
-                  <div className='bg-gray-200 border border-green-500 p-4 rounded-lg'>
-                    <p className='text-sm text-green-600 font-semibold mb-1'>
-                      AI Feedback
-                    </p>
-
-                    <p className='text-sm text-cyan-800 leading-relaxed '>
-                      {q.feedback && q.feedback.trim() !== "" ? q.feedback : "No feedback available for this question."}
-                    </p>
-
-                  </div>
-
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
 
           </motion.div>
 

@@ -57,13 +57,15 @@ function Pricing() {
   ]
 
   const handlePayment = async (plan) => {
-    if (!plan || plan.id === "free") return;
     try {
       setLoadingPlan(plan.id)
+     const amount = plan.id === "basic" ? 100 : plan.id === "pro" ? 250 : 0;
 
       const result = await axios.post(
         import.meta.env.VITE_SERVER_URL + "/api/payment/order" , {
           planId : plan.id,
+          amount:amount,
+          credits:plan.credits,
         },{withCredentials:true}
       )
       // console.log(result.data)
