@@ -1,25 +1,46 @@
 import User from '../models/user-model.js';
-import genToken from '../config/token.js'
+import genToken from '../config/token.js';
+import jwt from 'jsonwebtoken';
 
 export const googleAuth = async (req, res) => {
   try {
+    const { name, email, idToken } = req.body;
+    let userEmail = email;
+    let userName = name;
 
-    const { name, email } = req.body;
+    if (idToken) {
+      try {
+        const decoded = jwt.decode(idToken);
+        if (decoded && decoded.email) {
+          userEmail = decoded.email;
+          userName = decoded.name || name || userEmail.split("@")[0];
+        }
+      } catch (err) {
+        // Fallback to body email/name
+      }
+    }
 
-    let user = await User.findOne({ email });
+    if (!userEmail) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    let user = await User.findOne({ email: userEmail });
 
     if (!user) {
       user = await User.create({
-        name,
-        email
+        name: userName || userEmail.split("@")[0],
+        email: userEmail
       });
     }
 
     const token = await genToken(user._id);
+
+    const isProduction = process.env.NODE_ENV === "production" || Boolean(req.headers.host && !req.headers.host.includes("localhost"));
+
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
+      secure: isProduction,
+      sameSite: isProduction ? "None" : "Lax",
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
@@ -30,18 +51,21 @@ export const googleAuth = async (req, res) => {
     });
 
   } catch (error) {
-
     return res.status(500).json({
-      message: `Google auth error ${error}`
+      message: `Google auth error ${error.message || error}`
     });
-
   }
 };
 
-export const logOut = async (_req, res) => {
+export const logOut = async (req, res) => {
   try {
+    const isProduction = process.env.NODE_ENV === "production" || Boolean(req.headers.host && !req.headers.host.includes("localhost"));
 
-    res.clearCookie("token");
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "None" : "Lax",
+    });
 
     return res.status(200).json({
       success: true,
@@ -49,10 +73,8 @@ export const logOut = async (_req, res) => {
     });
 
   } catch (error) {
-
     return res.status(500).json({
-      message: `Logout error ${error}`
+      message: `Logout error ${error.message || error}`
     });
-
   }
 };

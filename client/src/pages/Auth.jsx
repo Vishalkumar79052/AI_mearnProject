@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BsRobot } from "react-icons/bs";
 import { IoSparkles } from "react-icons/io5";
 import { FcGoogle } from "react-icons/fc";
+import { FaLinkedin, FaGithub } from "react-icons/fa";
 import { motion } from "motion/react";
 import { signInWithPopup } from "firebase/auth";
 import axios from "axios";
